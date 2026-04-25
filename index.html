@@ -1254,18 +1254,19 @@
                 `<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">${f}</span>`
             ).join('');
             
-            // 生成宣传图片
+            // 生成快捷调节图片
             const promoImagesHtml = details.promoImages.map((img, index) => `
                 <div class="promo-image-container relative group" onclick="handlePromoClick('${sceneName}', ${index}, event)">
-                    <div class="promo-image ${details.bgClass} gradient-placeholder flex-col gap-2">
-                        <span class="text-4xl">${details.icon}</span>
-                        <span class="text-white text-sm">${img.title}</span>
+                    <div class="promo-image ${details.bgClass} gradient-placeholder">
+                        <span class="text-5xl">${details.icon}</span>
                     </div>
-                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <p class="text-lg font-medium">${img.title}</p>
-                            <p class="text-sm text-gray-300">${img.desc}</p>
-                            <p class="text-xs text-purple-300 mt-2">点击调节音效</p>
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                        <div class="text-center text-white px-3">
+                            <p class="text-lg font-medium mb-1">${img.title}</p>
+                            <p class="text-sm text-gray-300 mb-2">${img.desc}</p>
+                            <div class="inline-block px-3 py-1 bg-purple-500/30 rounded-full">
+                                <p class="text-xs text-purple-300">点击调节音效</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1304,11 +1305,11 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-white font-medium mb-3">🎨 宣传海报</h3>
+                        <h3 class="text-white font-medium mb-3">�️ 快捷调节</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             ${promoImagesHtml}
                         </div>
-                        <p class="text-gray-500 text-sm mt-2 text-center">💡 点击海报图片可以调节音效频率哦~</p>
+                        <p class="text-gray-500 text-sm mt-2 text-center">💡 点击按钮可以快速调节音效频率哦~</p>
                     </div>
                     
                     <div class="interactive-btn mb-4" onclick="adjustFrequencyFromModal('${sceneName}', event)">
