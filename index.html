@@ -168,6 +168,168 @@
             0% { width: 0; height: 0; opacity: 1; }
             100% { width: 100px; height: 100px; opacity: 0; margin-top: -50px; margin-left: -50px; }
         }
+
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 24px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .modal-close:hover {
+            background: rgba(139, 92, 246, 0.4);
+            transform: rotate(90deg);
+        }
+        
+        .poster-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .promo-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .promo-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+        
+        .interactive-btn {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.2));
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interactive-btn:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(99, 102, 241, 0.4));
+            transform: translateY(-2px);
+        }
+        
+        .interactive-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .interactive-btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .freq-indicator {
+            font-size: 3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .scene-bg-rain {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+        
+        .scene-bg-library {
+            background: linear-gradient(135deg, #3d2914, #5c4033, #8b6914);
+        }
+        
+        .scene-bg-cafe {
+            background: linear-gradient(135deg, #4a3728, #6f4e37, #a0522d);
+        }
+        
+        .scene-bg-ocean {
+            background: linear-gradient(135deg, #0c4a6e, #0369a1, #0284c7);
+        }
+        
+        .gradient-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-visual-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 16px 16px 0 0;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900">
@@ -177,77 +339,84 @@
             <span class="text-purple-400">🌙</span> 助眠音乐
         </h1>
         <p class="text-gray-400 text-lg">选择一个场景，让自然的声音伴你入眠</p>
-        <p class="text-purple-400 text-sm mt-2 click-hint">💡 点击场景图片可以调节音效频率哦~</p>
+        <p class="text-purple-400 text-sm mt-2 click-hint">💡 点击场景卡片查看详情和宣传海报，双击调节音效频率</p>
     </header>
 
     <!-- Scenes Grid -->
     <main class="container mx-auto px-4 pb-32">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- 深夜雨天 -->
-            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="rain" onclick="selectScene('rain')">
+            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="rain" onclick="handleSceneClick('rain', event)">
                 <div class="scene-overlay" id="rain-overlay"></div>
-                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=night%20city%20rainy%20street%20cozy%20window%20rain%20drops%20atmospheric%20moody%20lighting&image_size=square_hd" 
-                     alt="深夜的雨天" 
-                     class="w-full h-48 object-cover opacity-90">
+                <div class="w-full h-48 scene-bg-rain gradient-placeholder">
+                    <span class="text-6xl">🌧️</span>
+                </div>
                 <div class="p-5">
                     <h3 class="text-xl font-medium text-white mb-2">🌧️ 深夜的雨天</h3>
                     <p class="text-gray-400 text-sm mb-3">雨声淅沥，放松身心</p>
                     <div class="flex items-center justify-between">
                         <span class="text-purple-400 text-sm">频率: <span id="rain-freq">1.0</span>x</span>
-                        <span class="text-gray-500 text-xs">点击调节</span>
+                        <span class="text-gray-500 text-xs">点击查看详情</span>
                     </div>
                 </div>
             </div>
 
             <!-- 图书馆 -->
-            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="library" onclick="selectScene('library')">
+            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="library" onclick="handleSceneClick('library', event)">
                 <div class="scene-overlay" id="library-overlay"></div>
-                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cozy%20library%20interior%20bookshelves%20warm%20lighting%20peaceful%20reading%20nook%20classic%20atmosphere&image_size=square_hd" 
-                     alt="图书馆" 
-                     class="w-full h-48 object-cover opacity-90">
+                <div class="w-full h-48 scene-bg-library gradient-placeholder">
+                    <span class="text-6xl">📚</span>
+                </div>
                 <div class="p-5">
                     <h3 class="text-xl font-medium text-white mb-2">📚 图书馆</h3>
                     <p class="text-gray-400 text-sm mb-3">静谧环境，翻书声伴读</p>
                     <div class="flex items-center justify-between">
                         <span class="text-purple-400 text-sm">频率: <span id="library-freq">1.0</span>x</span>
-                        <span class="text-gray-500 text-xs">点击调节</span>
+                        <span class="text-gray-500 text-xs">点击查看详情</span>
                     </div>
                 </div>
             </div>
 
             <!-- 咖啡店 -->
-            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="cafe" onclick="selectScene('cafe')">
+            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="cafe" onclick="handleSceneClick('cafe', event)">
                 <div class="scene-overlay" id="cafe-overlay"></div>
-                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cozy%20coffee%20shop%20interior%20warm%20ambiance%20steam%20from%20coffee%20cup%20soft%20lighting%20comfortable&image_size=square_hd" 
-                     alt="咖啡店" 
-                     class="w-full h-48 object-cover opacity-90">
+                <div class="w-full h-48 scene-bg-cafe gradient-placeholder">
+                    <span class="text-6xl">☕</span>
+                </div>
                 <div class="p-5">
                     <h3 class="text-xl font-medium text-white mb-2">☕ 咖啡店</h3>
                     <p class="text-gray-400 text-sm mb-3">舒缓环境音，放松心情</p>
                     <div class="flex items-center justify-between">
                         <span class="text-purple-400 text-sm">频率: <span id="cafe-freq">1.0</span>x</span>
-                        <span class="text-gray-500 text-xs">点击调节</span>
+                        <span class="text-gray-500 text-xs">点击查看详情</span>
                     </div>
                 </div>
             </div>
 
             <!-- 海边 -->
-            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="ocean" onclick="selectScene('ocean')">
+            <div class="scene-card relative rounded-2xl overflow-hidden bg-slate-800 shadow-xl" data-scene="ocean" onclick="handleSceneClick('ocean', event)">
                 <div class="scene-overlay" id="ocean-overlay"></div>
-                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=peaceful%20ocean%20beach%20sunset%20gentle%20waves%20calming%20seascape%20serene%20coastal%20scene&image_size=square_hd" 
-                     alt="海边" 
-                     class="w-full h-48 object-cover opacity-90">
+                <div class="w-full h-48 scene-bg-ocean gradient-placeholder">
+                    <span class="text-6xl">🌊</span>
+                </div>
                 <div class="p-5">
                     <h3 class="text-xl font-medium text-white mb-2">🌊 海边</h3>
                     <p class="text-gray-400 text-sm mb-3">海浪轻拍，自然韵律</p>
                     <div class="flex items-center justify-between">
                         <span class="text-purple-400 text-sm">频率: <span id="ocean-freq">1.0</span>x</span>
-                        <span class="text-gray-500 text-xs">点击调节</span>
+                        <span class="text-gray-500 text-xs">点击查看详情</span>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- 场景详情模态框 -->
+    <div class="modal-overlay" id="scene-modal">
+        <div class="modal-content" id="modal-inner">
+            <!-- 内容将通过JS动态填充 -->
+        </div>
+    </div>
 
     <!-- Control Panel -->
     <div class="fixed bottom-0 left-0 right-0 control-panel p-6">
@@ -295,12 +464,70 @@
     </div>
 
     <script>
+        // 场景详细配置
+        const sceneDetails = {
+            rain: {
+                name: '深夜的雨天',
+                icon: '🌧️',
+                tagline: '在雨声中入眠，感受城市的宁静',
+                description: '雨声是最好的白噪音之一，它能够帮助你放松身心，忘记一天的烦恼。淅沥的雨声仿佛在诉说着温柔的故事，让你在宁静中安然入睡。',
+                features: ['雨声频率可调节', '多种雨滴音效混合', '舒缓的低频背景音', '助眠效果显著'],
+                bgClass: 'scene-bg-rain',
+                promoImages: [
+                    { title: '雨夜城市', desc: '霓虹灯下的宁静夜晚' },
+                    { title: '窗边听雨', desc: '雨滴敲打玻璃的节奏' },
+                    { title: '雨后清新', desc: '雨过天晴的静谧时刻' }
+                ]
+            },
+            library: {
+                name: '图书馆',
+                icon: '📚',
+                tagline: '在知识的海洋中，享受宁静的阅读时光',
+                description: '图书馆的安静环境是专注和放松的理想场所。轻柔的翻书声、低沉的交谈声，营造出独特的学习氛围，帮助你集中注意力或放松心情。',
+                features: ['翻书声频率可调节', '环境背景噪音', '低频环境音', '适合阅读和学习'],
+                bgClass: 'scene-bg-library',
+                promoImages: [
+                    { title: '知识殿堂', desc: '书架林立的安静空间' },
+                    { title: '阅读角落', desc: '温馨舒适的阅读环境' },
+                    { title: '静谧时光', desc: '专注学习的理想场所' }
+                ]
+            },
+            cafe: {
+                name: '咖啡店',
+                icon: '☕',
+                tagline: '一杯咖啡，一段音乐，一份宁静',
+                description: '咖啡店的环境音是最受欢迎的背景噪音之一。咖啡机的嘶嘶声、杯盘的碰撞声、轻柔的交谈声，营造出独特的舒适氛围，让你感到放松和安心。',
+                features: ['人声环境音', '咖啡机制音', '杯盘碰撞声', '舒适放松氛围'],
+                bgClass: 'scene-bg-cafe',
+                promoImages: [
+                    { title: '香浓咖啡', desc: '暖意满满的咖啡时光' },
+                    { title: '午后小憩', desc: '悠闲的下午茶时间' },
+                    { title: '城市角落', desc: '都市中的宁静避风港' }
+                ]
+            },
+            ocean: {
+                name: '海边',
+                icon: '🌊',
+                tagline: '聆听海浪的声音，感受大自然的呼吸',
+                description: '海浪的声音是大自然最完美的韵律。有规律的波浪声能够引导你的呼吸，让你的心跳逐渐放缓，进入深度放松的状态。海边的声音是最古老的助眠神器。',
+                features: ['海浪频率可调节', '真实波浪韵律', '自然白噪音', '深度放松效果'],
+                bgClass: 'scene-bg-ocean',
+                promoImages: [
+                    { title: '碧海蓝天', desc: '一望无际的海洋美景' },
+                    { title: '日落海滩', desc: '金色阳光洒在海面上' },
+                    { title: '宁静港湾', desc: '风平浪静的美丽时刻' }
+                ]
+            }
+        };
+
         // Audio context and nodes
         let audioContext;
         let masterGainNode;
         let isMuted = false;
         let isPlaying = false;
         let currentScene = null;
+        let lastClickTime = 0;
+        let clickTimeout = null;
         
         // Scene configurations
         const scenes = {
@@ -416,22 +643,18 @@
             scene.oscillators = [];
             scene.noiseNodes = [];
 
-            // Brown noise for rain (heavy, low frequency)
             const noiseBuffer = createBrownNoiseBuffer();
             const noiseSource = audioContext.createBufferSource();
             noiseSource.buffer = noiseBuffer;
             noiseSource.loop = true;
 
-            // Filter for rain sound
             const filter = audioContext.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.value = 800;
 
-            // Gain for volume control
             const gainNode = audioContext.createGain();
             gainNode.gain.value = scene.volume * scene.frequency;
 
-            // Connect nodes
             noiseSource.connect(filter);
             filter.connect(gainNode);
             gainNode.connect(masterGainNode);
@@ -439,7 +662,6 @@
             noiseSource.start();
             scene.noiseNodes.push({ source: noiseSource, gain: gainNode, filter: filter });
 
-            // Create periodic drops
             createRainDrops();
         }
 
@@ -480,7 +702,6 @@
             scene.oscillators = [];
             scene.noiseNodes = [];
 
-            // Low frequency hum (ambient)
             const humOsc = audioContext.createOscillator();
             const humGain = audioContext.createGain();
             humOsc.type = 'sine';
@@ -491,7 +712,6 @@
             humOsc.start();
             scene.oscillators.push(humOsc);
 
-            // Pink noise for ambiance
             const noiseBuffer = createPinkNoiseBuffer();
             const noiseSource = audioContext.createBufferSource();
             noiseSource.buffer = noiseBuffer;
@@ -510,7 +730,6 @@
             noiseSource.start();
             scene.noiseNodes.push({ source: noiseSource, gain: gainNode });
 
-            // Page turning sounds
             createPageTurns();
         }
 
@@ -521,7 +740,6 @@
             const createPageTurn = () => {
                 if (currentScene !== 'library' || !isPlaying) return;
                 
-                // Create page turn sound (filtered noise sweep)
                 const noiseBuffer = createNoiseBuffer();
                 const noiseSource = audioContext.createBufferSource();
                 noiseSource.buffer = noiseBuffer;
@@ -557,7 +775,6 @@
             scene.oscillators = [];
             scene.noiseNodes = [];
 
-            // Multiple babble voices (filtered noise)
             const createBabble = (freq, volume) => {
                 const noiseBuffer = createPinkNoiseBuffer();
                 const noiseSource = audioContext.createBufferSource();
@@ -572,7 +789,6 @@
                 const gainNode = audioContext.createGain();
                 gainNode.gain.value = volume;
                 
-                // LFO for frequency modulation (simulate speech cadence)
                 const lfo = audioContext.createOscillator();
                 const lfoGain = audioContext.createGain();
                 lfo.frequency.value = 2 * scene.frequency;
@@ -589,12 +805,10 @@
                 scene.noiseNodes.push({ source: noiseSource, gain: gainNode, lfo: lfo });
             };
 
-            // Create multiple babble layers
             createBabble(300, scene.volume * 0.3);
             createBabble(500, scene.volume * 0.25);
             createBabble(700, scene.volume * 0.2);
 
-            // Coffee machine hum
             const humOsc = audioContext.createOscillator();
             const humGain = audioContext.createGain();
             humOsc.type = 'triangle';
@@ -605,7 +819,6 @@
             humOsc.start();
             scene.oscillators.push(humOsc);
 
-            // Cup clinking sounds
             createCupSounds();
         }
 
@@ -646,18 +859,15 @@
             scene.oscillators = [];
             scene.noiseNodes = [];
 
-            // Brown noise for waves
             const noiseBuffer = createBrownNoiseBuffer();
             const noiseSource = audioContext.createBufferSource();
             noiseSource.buffer = noiseBuffer;
             noiseSource.loop = true;
 
-            // Filter for wave sound
             const filter = audioContext.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.value = 600;
 
-            // LFO to modulate filter frequency (wave motion)
             const lfo = audioContext.createOscillator();
             const lfoGain = audioContext.createGain();
             lfo.type = 'sine';
@@ -667,11 +877,9 @@
             lfoGain.connect(filter.frequency);
             lfo.start();
 
-            // Gain for volume
             const gainNode = audioContext.createGain();
             gainNode.gain.value = scene.volume;
 
-            // LFO to modulate volume
             const volumeLfo = audioContext.createOscillator();
             const volumeLfoGain = audioContext.createGain();
             volumeLfo.type = 'sine';
@@ -681,7 +889,6 @@
             volumeLfoGain.connect(gainNode.gain);
             volumeLfo.start();
 
-            // Connect nodes
             noiseSource.connect(filter);
             filter.connect(gainNode);
             gainNode.connect(masterGainNode);
@@ -689,7 +896,6 @@
             noiseSource.start();
             scene.noiseNodes.push({ source: noiseSource, gain: gainNode, filter: filter, lfos: [lfo, volumeLfo] });
 
-            // Add some wave crashes periodically
             createWaveCrashes();
         }
 
@@ -752,27 +958,22 @@
         function selectScene(sceneName) {
             initAudio();
             
-            // Remove active class from all cards
             document.querySelectorAll('.scene-card').forEach(card => {
                 card.classList.remove('active');
             });
             
-            // Add active class to selected card
             const selectedCard = document.querySelector(`[data-scene="${sceneName}"]`);
             if (selectedCard) {
                 selectedCard.classList.add('active');
             }
             
-            // Update current scene name
             document.getElementById('current-scene-name').textContent = 
                 scenes[sceneName].icon + ' ' + scenes[sceneName].name;
             
-            // If playing, stop current and start new
             const wasPlaying = isPlaying;
             stopCurrentScene();
             currentScene = sceneName;
             
-            // Start visual effects
             startVisualEffects(sceneName);
             
             if (wasPlaying) {
@@ -871,11 +1072,9 @@
         let visualIntervals = [];
         
         function startVisualEffects(sceneName) {
-            // Clear existing intervals
             visualIntervals.forEach(interval => clearInterval(interval));
             visualIntervals = [];
             
-            // Clear all overlays
             document.querySelectorAll('.scene-overlay').forEach(overlay => {
                 overlay.innerHTML = '';
             });
@@ -979,39 +1178,55 @@
             }
         }
 
-        // Click interaction on scene cards
-        document.querySelectorAll('.scene-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                const sceneName = this.dataset.scene;
-                const scene = scenes[sceneName];
-                
-                // Only adjust frequency if this is the current scene
-                if (currentScene === sceneName) {
-                    // Increase frequency
-                    scene.frequency = Math.min(scene.frequency + scene.step, scene.maxFreq);
-                    
-                    // If at max, reset to min
-                    if (scene.frequency >= scene.maxFreq) {
-                        scene.frequency = scene.minFreq;
-                    }
-                    
-                    // Update display
-                    document.getElementById(sceneName + '-freq').textContent = scene.frequency.toFixed(1);
-                    
-                    // Create click effect
-                    createClickEffect(e.clientX, e.clientY);
-                    
-                    // Restart sounds if playing
-                    if (isPlaying) {
-                        stopCurrentScene();
-                        startCurrentScene();
-                    }
-                    
-                    // Restart visual effects
-                    startVisualEffects(sceneName);
-                }
-            });
-        });
+        // 处理场景点击（区分单击和双击）
+        function handleSceneClick(sceneName, event) {
+            const now = Date.now();
+            const timeDiff = now - lastClickTime;
+            
+            if (clickTimeout) {
+                clearTimeout(clickTimeout);
+                clickTimeout = null;
+            }
+            
+            // 双击检测（300ms内）
+            if (timeDiff < 300) {
+                // 双击：调节频率
+                adjustFrequency(sceneName, event);
+            } else {
+                // 单击：延迟执行，如果不是双击则打开模态框
+                clickTimeout = setTimeout(() => {
+                    selectScene(sceneName);
+                    openModal(sceneName);
+                }, 300);
+            }
+            
+            lastClickTime = now;
+        }
+
+        // 调节频率
+        function adjustFrequency(sceneName, event) {
+            const scene = scenes[sceneName];
+            
+            scene.frequency = Math.min(scene.frequency + scene.step, scene.maxFreq);
+            
+            if (scene.frequency >= scene.maxFreq) {
+                scene.frequency = scene.minFreq;
+            }
+            
+            document.getElementById(sceneName + '-freq').textContent = scene.frequency.toFixed(1);
+            
+            createClickEffect(event.clientX, event.clientY);
+            
+            if (isPlaying && currentScene === sceneName) {
+                stopCurrentScene();
+                startCurrentScene();
+            }
+            
+            startVisualEffects(sceneName);
+            
+            // 如果模态框打开，更新频率显示
+            updateModalFrequency(sceneName);
+        }
         
         function createClickEffect(x, y) {
             const wave = document.createElement('div');
@@ -1026,6 +1241,332 @@
                 if (wave.parentNode) wave.parentNode.removeChild(wave);
             }, 1000);
         }
+
+        // 打开模态框
+        function openModal(sceneName) {
+            const modal = document.getElementById('scene-modal');
+            const modalInner = document.getElementById('modal-inner');
+            const details = sceneDetails[sceneName];
+            const scene = scenes[sceneName];
+            
+            // 生成功能标签
+            const featuresHtml = details.features.map(f => 
+                `<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">${f}</span>`
+            ).join('');
+            
+            // 生成宣传图片
+            const promoImagesHtml = details.promoImages.map((img, index) => `
+                <div class="promo-image-container relative group" onclick="handlePromoClick('${sceneName}', ${index}, event)">
+                    <div class="promo-image ${details.bgClass} gradient-placeholder flex-col gap-2">
+                        <span class="text-4xl">${details.icon}</span>
+                        <span class="text-white text-sm">${img.title}</span>
+                    </div>
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <p class="text-lg font-medium">${img.title}</p>
+                            <p class="text-sm text-gray-300">${img.desc}</p>
+                            <p class="text-xs text-purple-300 mt-2">点击调节音效</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            modalInner.innerHTML = `
+                <div class="modal-close" onclick="closeModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                
+                <div class="relative">
+                    <div class="poster-image ${details.bgClass} gradient-placeholder flex-col gap-4">
+                        <span class="text-7xl">${details.icon}</span>
+                        <span class="text-2xl text-white font-medium">${details.name}</span>
+                    </div>
+                    <div class="modal-visual-overlay" id="modal-visual"></div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-white mb-2">${details.name}</h2>
+                        <p class="text-purple-400 text-lg">${details.tagline}</p>
+                    </div>
+                    
+                    <div class="bg-slate-800/50 rounded-xl p-4 mb-6">
+                        <p class="text-gray-300 leading-relaxed">${details.description}</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-white font-medium mb-3">🎯 场景特点</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${featuresHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-white font-medium mb-3">🎨 宣传海报</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            ${promoImagesHtml}
+                        </div>
+                        <p class="text-gray-500 text-sm mt-2 text-center">💡 点击海报图片可以调节音效频率哦~</p>
+                    </div>
+                    
+                    <div class="interactive-btn mb-4" onclick="adjustFrequencyFromModal('${sceneName}', event)">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-white font-medium">🎵 当前音效频率</h4>
+                                <p class="text-gray-400 text-sm">点击调节频率 (0.5x - 2.0x)</p>
+                            </div>
+                            <div class="freq-indicator" id="modal-freq-display">${scene.frequency.toFixed(1)}x</div>
+                        </div>
+                        <div class="mt-3 h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-purple-500 to-cyan-400 transition-all duration-300" 
+                                 id="modal-freq-bar" 
+                                 style="width: ${((scene.frequency - scene.minFreq) / (scene.maxFreq - scene.minFreq)) * 100}%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>0.5x (慢速)</span>
+                            <span>1.0x (正常)</span>
+                            <span>2.0x (快速)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button class="flex-1 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl font-medium transition hover:opacity-90"
+                                onclick="playFromModal('${sceneName}')">
+                            ${currentScene === sceneName && isPlaying ? '⏸️ 暂停播放' : '▶️ 开始播放'}
+                        </button>
+                        <button class="px-6 py-3 bg-slate-700 text-white rounded-xl font-medium transition hover:bg-slate-600"
+                                onclick="resetSceneFrequency('${sceneName}')">
+                            🔄 重置
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            
+            // 启动模态框中的视觉效果
+            startModalVisualEffects(sceneName);
+        }
+
+        // 模态框中的视觉效果
+        let modalVisualIntervals = [];
+        
+        function startModalVisualEffects(sceneName) {
+            modalVisualIntervals.forEach(interval => clearInterval(interval));
+            modalVisualIntervals = [];
+            
+            const overlay = document.getElementById('modal-visual');
+            if (!overlay) return;
+            
+            overlay.innerHTML = '';
+            
+            const scene = scenes[sceneName];
+            
+            switch(sceneName) {
+                case 'rain':
+                    createModalRainVisual(overlay, scene);
+                    break;
+                case 'library':
+                    createModalLibraryVisual(overlay, scene);
+                    break;
+                case 'cafe':
+                    createModalCafeVisual(overlay, scene);
+                    break;
+                case 'ocean':
+                    createModalOceanVisual(overlay, scene);
+                    break;
+            }
+        }
+        
+        function createModalRainVisual(overlay, scene) {
+            const createDrop = () => {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.height = (50 + Math.random() * 80) + 'px';
+                drop.style.animationDuration = (1 / scene.frequency) + 's';
+                drop.style.opacity = 0.4 + Math.random() * 0.4;
+                overlay.appendChild(drop);
+                
+                setTimeout(() => {
+                    if (drop.parentNode) drop.parentNode.removeChild(drop);
+                }, 1000 / scene.frequency);
+            };
+            
+            const interval = setInterval(() => {
+                const count = Math.floor(5 * scene.frequency);
+                for (let i = 0; i < count; i++) {
+                    setTimeout(createDrop, Math.random() * 100);
+                }
+            }, 80);
+            modalVisualIntervals.push(interval);
+        }
+        
+        function createModalLibraryVisual(overlay, scene) {
+            const createPageTurn = () => {
+                const page = document.createElement('div');
+                page.className = 'book-page';
+                page.style.right = '15%';
+                page.style.top = '15%';
+                page.style.animationDuration = (1 / scene.frequency) + 's';
+                page.style.height = '70%';
+                overlay.appendChild(page);
+                
+                setTimeout(() => {
+                    if (page.parentNode) page.parentNode.removeChild(page);
+                }, 1000 / scene.frequency);
+            };
+            
+            const interval = setInterval(createPageTurn, 1500 / scene.frequency);
+            modalVisualIntervals.push(interval);
+        }
+        
+        function createModalCafeVisual(overlay, scene) {
+            const createSteam = () => {
+                const steam = document.createElement('div');
+                steam.className = 'coffee-steam';
+                steam.style.left = (40 + Math.random() * 20) + '%';
+                steam.style.bottom = '15%';
+                steam.style.animationDuration = (2.5 / scene.frequency) + 's';
+                steam.style.width = '30px';
+                steam.style.height = '60px';
+                overlay.appendChild(steam);
+                
+                setTimeout(() => {
+                    if (steam.parentNode) steam.parentNode.removeChild(steam);
+                }, 2500 / scene.frequency);
+            };
+            
+            const interval = setInterval(() => {
+                const count = Math.floor(3 * scene.frequency);
+                for (let i = 0; i < count; i++) {
+                    setTimeout(createSteam, Math.random() * 400);
+                }
+            }, 250);
+            modalVisualIntervals.push(interval);
+        }
+        
+        function createModalOceanVisual(overlay, scene) {
+            for (let i = 0; i < 4; i++) {
+                const wave = document.createElement('div');
+                wave.className = 'wave';
+                wave.style.bottom = (i * 12) + '%';
+                wave.style.animationDuration = (4 / scene.frequency) + 's';
+                wave.style.animationDelay = (i * 0.3) + 's';
+                wave.style.opacity = 0.25 - (i * 0.05);
+                overlay.appendChild(wave);
+            }
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('scene-modal');
+            modal.classList.remove('active');
+            
+            modalVisualIntervals.forEach(interval => clearInterval(interval));
+            modalVisualIntervals = [];
+        }
+
+        // 从模态框调节频率
+        function adjustFrequencyFromModal(sceneName, event) {
+            // 创建波纹效果
+            const btn = event.currentTarget;
+            const rect = btn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = (event.clientX - rect.left) + 'px';
+            ripple.style.top = (event.clientY - rect.top) + 'px';
+            btn.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+            
+            // 调节频率
+            adjustFrequency(sceneName, event);
+        }
+
+        // 处理宣传图片点击
+        function handlePromoClick(sceneName, index, event) {
+            event.stopPropagation();
+            
+            // 创建点击效果
+            createClickEffect(event.clientX, event.clientY);
+            
+            // 调节频率
+            adjustFrequency(sceneName, event);
+            
+            // 添加视觉反馈
+            const container = event.currentTarget;
+            container.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                container.style.transform = '';
+            }, 200);
+        }
+
+        // 更新模态框中的频率显示
+        function updateModalFrequency(sceneName) {
+            const scene = scenes[sceneName];
+            const freqDisplay = document.getElementById('modal-freq-display');
+            const freqBar = document.getElementById('modal-freq-bar');
+            
+            if (freqDisplay) {
+                freqDisplay.textContent = scene.frequency.toFixed(1) + 'x';
+            }
+            
+            if (freqBar) {
+                const percentage = ((scene.frequency - scene.minFreq) / (scene.maxFreq - scene.minFreq)) * 100;
+                freqBar.style.width = percentage + '%';
+            }
+            
+            // 更新模态框视觉效果
+            startModalVisualEffects(sceneName);
+        }
+
+        // 从模态框播放
+        function playFromModal(sceneName) {
+            if (currentScene !== sceneName) {
+                selectScene(sceneName);
+            }
+            
+            if (!isPlaying) {
+                togglePlay();
+            } else {
+                togglePlay();
+            }
+            
+            // 重新打开模态框更新按钮状态
+            setTimeout(() => openModal(sceneName), 100);
+        }
+
+        // 重置场景频率
+        function resetSceneFrequency(sceneName) {
+            const scene = scenes[sceneName];
+            scene.frequency = 1.0;
+            document.getElementById(sceneName + '-freq').textContent = '1.0';
+            
+            if (isPlaying && currentScene === sceneName) {
+                stopCurrentScene();
+                startCurrentScene();
+            }
+            
+            startVisualEffects(sceneName);
+            updateModalFrequency(sceneName);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('scene-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
 
         // Start with rain scene selected
         document.addEventListener('DOMContentLoaded', () => {
